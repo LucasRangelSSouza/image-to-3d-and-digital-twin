@@ -1,0 +1,3 @@
+colmap info {'version': '4.2.1', 'cuda': False, 'lib': 'colmap', 'status': 'info'}
+colmap skipped {'reason': 'dataset indisponivel', 'lib': 'colmap', 'status': 'skipped'}
+colmap done {'total_s': 10.4, 'lib': 'colmap', 'status': 'done'}

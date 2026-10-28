@@ -1,3 +1,5 @@
+# Per-library timing functions, including the COLMAP version/CUDA check.
+# Original harness script, copied unmodified apart from this header. Comments inside may be in Portuguese.
 """Bench das bibliotecas que dependem de GPU. Cada subcomando instala (se preciso), mede e escreve 1 JSON por linha em OUT/libs.jsonl.
 Falha/incompatibilidade vira registro failed/incompatible com o log; nunca vira numero inventado."""
 import glob

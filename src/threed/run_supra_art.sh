@@ -1,4 +1,6 @@
 #!/bin/bash
+# Variant that keeps the produced artifacts and the full run log.
+# Original harness script, copied unmodified apart from this header. Comments inside may be in Portuguese.
 # SUPRA-Tex em GPU Ada (4090) salvando os ARTEFATOS (GLB, entrada, recibo) para evidencia.
 cd /workspace/eco
 ITEMS="supra" bash /workspace/eco/run_all.sh 2>&1 | grep -v SCRIPT_DONE | tail -3

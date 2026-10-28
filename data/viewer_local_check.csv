@@ -1,0 +1,12 @@
+check,value,unit
+node_version,v22.23.4,
+repository_commit_date,2026-10-22,
+npm_ci_packages_added,32,packages
+npm_ci_seconds,5,s
+vite_build_modules_transformed,115,modules
+vite_build_seconds,1.493,s
+preview_http_status,200,
+pages_screenshotted,2,pages
+bad_vertices_fixed_in_one_shelf_model,312,vertices
+convex_decomposition_parts_one_chair,13,parts
+convex_decomposition_ms_one_chair,675,ms

@@ -1,75 +1,56 @@
 # Image to 3D and digital twin
 
-Ten attempts to run an open image-to-3D tool on rented and owned GPUs, plus a note on COLMAP and a local build of an open room viewer.
+**Ten attempts to run one open image-to-3D tool (SUPRA-Tex) on rented and owned GPUs: two finished, eight did not, and the reasons are the useful part.** Also a note on COLMAP and a local build of an open 3D room viewer.
 
-Author: Lucas Rangel. All numbers below come from `evidence/results.json` (measured runs on rented Vast.ai GPUs, Oct 2026). This repository keeps the failed attempts on purpose, since they are the result. Every row is a real run on a shared marketplace host: values are single-session medians, outliers are kept (not filtered), and a different host of the same GPU model can differ noticeably.
+![Ten attempts](results/figures/ten_attempts.png)
 
-## Conclusion
+## Why this matters
 
-SUPRA-Tex completed twice, both times on an RTX 4090, and failed eight times: 5 attempts stopped at install, 1 during the model download, 2 at the run stage (one for a missing imaging library, one destroyed by my budget guard). One failure, on the ARM GB10, is a platform limit (an x86-only wheel). The rest are environment problems that I did not all retry. On both finished runs the final mesh stages took 83 and 93 seconds, 69 to 73 percent of that in the surface parameterization, and the reconstructed silhouette matched the input image with an intersection over union of 0.991. I did not copy the output GLB off the rented machine, so the evidence for the two completions is the run log, not the file. Read the full account in the Kaggle article "Ten attempts to run an image-to-3D tool".
+Image-to-3D is where a "does it run?" question turns into a week of work. A tool pins a CUDA toolkit, builds native extensions and downloads gated models, and every one of those steps fails differently on different hardware. A compatibility grid that says "failed" for five cards hides that four of the five failures were fixable environment problems and only one belongs to the platform. This repository keeps every attempt, classifies the cause from the logs, prices the failures and records the two runs that worked.
 
-## Ten attempts at one image-to-3D tool (SUPRA-Tex)
+## Headline results
 
-| session_start_utc | gpu | stage_reached | cause_class | session_cost_usd |
-|---|---|---|---|---|
-| 20261027T035103 | RTX 3090 | install | environment | 0.268 |
-| 20261027T045517 | RTX 4090 | install | environment | 0.296 |
-| 20261027T062444 | RTX 5090 | install | environment (not retried after the fix) | 0.538 |
-| 20261027T071330 | L40S | run | environment | 0.535 |
-| 20261027T075632 | RTX PRO 6000 | install | environment (not retried after the fix) | 1.25 |
-| 20261027T090319 | RTX 4090 | complete | none | 0.353 |
-| 20261027T095940 | GB10 | install | platform (ARM) | 0.0 |
-| 20261027T110728 | RTX 4090 | complete | none | 0.414 |
-| 20261027T234700 | RTX 4090 | models | infrastructure (slow host) | 0.321 |
-| 20261028T003529 | RTX 4090 | run | budget guard | 0.365 |
+| Finding | Evidence |
+|---|---|
+| **2 of 10 attempts completed**, both on an RTX 4090 | 95% Wilson interval 0.06 to 0.51: with ten attempts the data cannot tell "one in five" from "one in two" |
+| Only **one** failure belongs to the platform | the ARM GB10: the installer pins a wheel that exists only for x86 Linux and runs an x86 CUDA installer. The other failures were a missing toolkit, a native extension (CuMesh) that failed to build, a missing imaging library, a slow model download and my own budget guard |
+| Failures cost most of the money | US$ 4.34 across all sessions, of which US$ 0.77 produced a result; 82% went to sessions that ended in an error (most also ran other tests, so this is an upper bound) |
+| Where a finished run spends its time | 83 to 93 seconds in the final mesh stages, 69% to 73% of it in surface parameterization for texturing |
+| What the log says about quality | silhouette overlap with the input photograph (intersection over union) 0.991; 11.4 million faces before simplification. This says the outline matches, not that the back or the texture is right |
 
-Stages are ordered: install, models, run, complete. `what_happened` for each attempt is in `evidence/results.json`. Session cost is the rental estimate of the whole session, which usually also ran other tests.
+## What is honest about this evidence
 
-## The two runs that finished (RTX 4090)
+The two completions are proven by **the run log**, which ends with the path of the textured GLB file and the quality line, **not by the file**: the rented machine was destroyed before the GLB was copied off, and a later run was destroyed by my own credit guard while inference was running. No mesh is published. The logs are in `logs/` (progress bars removed). COLMAP was installed with CUDA support and its version printed on three cards, but its reconstruction test was *skipped for lack of an image dataset*; the `total_s` values of COLMAP rows in the raw sweep table are the wall time of the whole check block, not a reconstruction time, so this repository publishes no COLMAP timing.
 
-Stage readings are cumulative elapsed times of the final mesh stages (mm:ss).
+## The room viewer
 
-| session_start_utc | Building BVH | Cleaning mesh | Parameterizing new mesh | Sampling attributes | Finalizing mesh | silhouette_iou | intermediate_faces |
-|---|---|---|---|---|---|---|---|
-| 20261027T090319 | 00:06 | 00:08 | 01:05 | 01:11 | 01:23 | 0.991 | 11408604 |
-| 20261027T110728 | 00:06 | 00:07 | 01:15 | 01:20 | 01:33 | 0.991 | 11417778 |
+An open 3D room viewer was built from its public source on a local machine (Node.js 22): 115 modules transformed in 1.5 s, a preview server answered HTTP 200, and two pages were rendered headlessly. That shows the viewer builds and runs on laptop-class hardware, a prerequisite for showing results to customers. The viewer's demo assets may not be redistributed, so **no screenshots, models or textures from it are included**; see `data/viewer_local_check.csv`.
 
-## COLMAP
+## Repository map
 
-COLMAP 4.2.1 with CUDA support was installed and reported its version on three cards. The reconstruction test was skipped because no image dataset was available in the rented environments, so this repository has no COLMAP reconstruction timing. The `total_s` values that appear in the raw libs table for COLMAP (10.4, 11.5 and 599.1 seconds) are the wall time of the whole check block in each session, not a reconstruction time.
-
-## Room viewer (local check, own computer)
-
-| check | value | unit |
-|---|---|---|
-| node_version | v22.23.4 |  |
-| repository_commit_date | 2026-10-22 |  |
-| npm_ci_packages_added | 32 | packages |
-| npm_ci_seconds | 5 | s |
-| vite_build_modules_transformed | 115 | modules |
-| vite_build_seconds | 1.493 | s |
-| preview_http_status | 200 |  |
-| pages_screenshotted | 2 | pages |
-| bad_vertices_fixed_in_one_shelf_model | 312 | vertices |
-| convex_decomposition_parts_one_chair | 13 | parts |
-| convex_decomposition_ms_one_chair | 675 | ms |
-
-The viewer's demo assets are not redistributable (see its asset terms), so no screenshots, models or textures are published here, only the build record.
-
-## What this cost
-
-Whole campaign: US$ 50.79 (about R$ 249), shared by all repositories of this series. Rental share of the GPUs used in this repo:
-
-| GPU | rentals | hours | rental cost (USD) |
-|---|---|---|---|
-| RTX 3090 | 30 | 11.8 | 2.97 |
-| RTX 4090 | 29 | 6.22 | 4.05 |
-| RTX 5090 | 39 | 12.44 | 8.54 |
-| L40S | 10 | 4.91 | 3.92 |
-| RTX PRO 6000 | 15 | 3.67 | 5.71 |
-
-Rental figures are hourly price x time of each rented instance; marketplace download fees and idle time are in the campaign total, not in this table.
+```
+src/threed/    run_supra.sh, run_supra_art.sh (the install-and-run recipes), run_libs3.sh, libs.py (COLMAP check)
+analysis/      attempts.py: classification, costs, stage timings, intervals
+data/          supra_attempts.csv, supra_completed_runs.csv, viewer_local_check.csv
+logs/          cleaned run logs of the two finished runs
+results/       figures and tables;  tests/  conclusions that must keep following from the data
+```
 
 ## Reproduce
 
-`bash scripts/run.sh` documents the exact commands used on the rented instance (Ubuntu, CUDA, Python venv). Evidence files are the unmodified measured rows (host location and reliability removed).
+```bash
+make setup && make all
+bash src/threed/run_supra.sh      # on an x86 CUDA machine; needs access to the gated image-encoder weights
+```
+
+## Limits
+
+One tool, one input image, 4090 only for completions. Failures on the 3090, 5090, L40S and PRO 6000 were not retried after the 4090 fix, so those cells read "not reached", not "fails". Mesh quality beyond the silhouette was not evaluated.
+
+## Articles that use this repository
+
+- [Ten attempts to run an image-to-3D tool](https://www.kaggle.com/code/lucasrangelss/ten-attempts-to-run-an-image-to-3d-tool)
+- [What fits and what fails across seven GPUs](https://www.kaggle.com/code/lucasrangelss/what-fits-and-what-fails-across-seven-gpus)
+- Harness and costs: [vast-gpu-benchmark-harness](https://github.com/LucasRangelSSouza/vast-gpu-benchmark-harness)
+
+Licence: MIT for this code. SUPRA-Tex and the viewer keep their own terms, see `LICENSE_NOTES.md`.

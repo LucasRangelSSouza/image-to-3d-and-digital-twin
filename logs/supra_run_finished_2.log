@@ -1,0 +1,19 @@
+[Supra-Tex inference] attention=sdpa; sparse_attention=sdpa; low_vram=True
+[1/2] Foreground, MoGe-2, geometry, material maps -> /workspace/g/st/outputs/spiny_whelk_shell_work/input
+[Supra-Tex inference] attention=sdpa; sparse_attention=sdpa; low_vram=True
+[2/2] Surface observations, PBR completion, GLB export -> /workspace/g/st/outputs/spiny_whelk_shell.glb
+[Supra-Tex inference] attention=sdpa; sparse_attention=sdpa; low_vram=True
+[SPARSE] Conv backend: flex_gemm; Attention backend: sdpa; Batch broadcast: direct
+Floaters: removed 0 of 1 components (0 of 11417778 faces)
+Completion low VRAM: sequential models, CPU handoffs, decoder layer offload
+Observation: silhouette IoU 0.991 (geometry inside image 0.998, image covered 0.993); admitted 311631 of 317044 trusted pixels (missed geometry 32, depth edge 5381)
+[ATTENTION] Using backend: sdpa
+Observation cache: disabled (low VRAM)
+Cleaning mesh:  33%|███▎      | 2/6 [00:06<00:13,  3.36s/it]/workspace/g/st/.venv/lib/python3.10/site-packages/cumesh/remeshing.py:220: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  normals0 = torch.cross(mesh_vertices[atempt_triangles_0[:, 1]] - mesh_vertices[atempt_triangles_0[:, 0]], mesh_vertices[atempt_triangles_0[:, 2]] - mesh_vertices[atempt_triangles_0[:, 0]])
+Finalizing mesh: 100%|██████████| 6/6 [01:33<00:00, 17.18s/it]
+Finalizing mesh: 100%|██████████| 6/6 [01:33<00:00, 15.61s/it]
+Textured mesh: /workspace/g/st/outputs/spiny_whelk_shell.glb
+Intermediate files and run receipt: /workspace/g/st/outputs/spiny_whelk_shell_work

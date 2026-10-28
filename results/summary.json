@@ -1,0 +1,19 @@
+{
+ "attempts": 10,
+ "completed": 2,
+ "cost_error_share": 0.8232718894009217,
+ "cost_productive": 0.7669999999999999,
+ "cost_total": 4.34,
+ "faces_million": 11.408604,
+ "install_stops": 5,
+ "iou": 0.991,
+ "param_share_max": 0.7311827956989247,
+ "param_share_min": 0.6867469879518072,
+ "retry_rule_of_three": 0.06,
+ "stage_total_max": 93.0,
+ "stage_total_min": 83.0,
+ "viewer_build_modules": 115.0,
+ "viewer_build_s": 1.493,
+ "wilson_high": 0.5098431532792765,
+ "wilson_low": 0.056680947980693314
+}
